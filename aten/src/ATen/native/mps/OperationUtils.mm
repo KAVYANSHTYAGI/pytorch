@@ -1024,10 +1024,15 @@ void MetalShaderLibrary::exec_binary_kernel(TensorIteratorBase& iter,
                                             std::optional<c10::Scalar> alpha) {
   TORCH_CHECK(iter.common_dtype() != at::kDouble, "float64 is not supported on MPS");
   TORCH_CHECK(iter.can_use_32bit_indexing(), "Can't be indexed using 32-bit iterator");
+  
+  iter.cast_inputs_to_common_dtype(true);
+  iter.promote_common_dtype(true);
 
   Tensor input = iter.input(0);
   Tensor other = iter.input(1);
   Tensor out = iter.output();
+
+
 
   id<MTLDevice> device = MPSDevice::getInstance()->device();
   MPSStream* mpsStream = getCurrentMPSStream();
